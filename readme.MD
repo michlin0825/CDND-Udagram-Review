@@ -14,11 +14,13 @@ The project is composed of three pieces:
 
 Ensure relevant dependencies are in place with the following commands:
 
-`docker --version`
-`aws --version`
-`eksctl version`
-`kubectl version --short --client`
-`aws-iam-authenticator version`
+```bash
+docker --version
+aws --version
+eksctl version
+kubectl version --short --client
+aws-iam-authenticator version
+```
 
 ### Setup Environment Variables
 
@@ -43,7 +45,7 @@ Build local docker images for the project
 docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel
 ```
 
-![build_docker_image](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/build_docker_image.png)
+![build_docker_image](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/build_docker_image.png)
 
 ### Start docker containers
 
@@ -53,13 +55,13 @@ Spin up docker containers with following command
 docker-compose -f ./udacity-c3-deployment/docker/docker-compose.yaml up
 ```
 
-![start_docker_container](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/start_docker_container.png)
+![start_docker_container](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/start_docker_container.png)
 
 ### Test application
 
 Make sure users can sign-up, login, post message, and attach pictures. Testing URL is at http://localhost:8100
 
-![test_web_app](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/test_web_app.png)
+![test_web_app](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/test_web_app.png)
 
 ### Upload image to Dockerhub
 
@@ -69,7 +71,7 @@ For distribution over the internet, we can publish container to Dockerhub.
 docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml push
 ```
 
-![image_to_dockerhub](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/image_to_dockerhub.png)
+![image_to_dockerhub](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/image_to_dockerhub.png)
 
 ### Travis CI/CD build
 
@@ -105,11 +107,11 @@ install:
 
 - Add environment variables in TravisCI by selecting the settings option. If we want to have travis push image to Dockerhub, we need to add in credential for id/password to Dockerhub.
 
-![travis_env_vars](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/travis_env_vars.png)
+![travis_env_vars](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/travis_env_vars.png)
 
 - Commit and push changes to Github, and trigger a Travis CI build.
 
-![travis_cicd_build](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/travis_cicd_build.png)
+![travis_cicd_build](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/travis_cicd_build.png)
 
 ### Provision a Kubernetes cluster
 
@@ -125,7 +127,7 @@ eksctl create cluster \
 --node-ami auto
 ```
 
-![aws_k8s_cluster](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/aws_k8s_cluster.png)
+![aws_k8s_cluster](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/aws_k8s_cluster.png)
 
 ### Setup k8s configmaps and secrets
 
@@ -182,7 +184,7 @@ kubectl get svc
 kubectl get all
 ```
 
-![aws_app_ready](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/aws_app_ready.png)
+![aws_app_ready](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/aws_app_ready.png)
 
 Finally we can set up port forwarding to test drive the service.
 
@@ -191,13 +193,13 @@ kubectl port-forward service/reverseproxy 8080:8080
 kubectl port-forward service/frontend 8100:8100
 ```
 
-![k8s_port_forward](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/k8s_port_forward.png)
+![k8s_port_forward](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/k8s_port_forward.png)
 
 ### Additional logging
 
 The application is monitored by Amazon CloudWatch. Inside AWS EKS control plane, we can optionally activate various types of logs for purpose of debugging.
 
-![aws_cloudwatch_logs](https://github.com/michlin0825/CDND-Udagram/blob/master/screenshots/aws_cloudwatch_logs.png)
+![aws_cloudwatch_logs](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/aws_cloudwatch_logs.png)
 
 ### Upgrade without disruption
 
