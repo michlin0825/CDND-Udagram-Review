@@ -75,11 +75,10 @@ docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml push
 
 ### Travis CI/CD build
 
-The github master branch will trigger a Travis CI/CD build on every commmit.
+For CI/CD, we use Travis CI for this project. The github master branch will trigger the build process on every commmit.
 
-- Sign up for TravisCL and connect Github application repo to TrivisCI.
-- Add .travis.yml file to the root of the application.
-- Copy and paste the following code into your .travis.yml file:
+- Sign up TravisCI and connect Github repo to TrivisCI.
+- Add .travis.yml to the root of the application.
 
 ```bash
 language: minimal
@@ -105,17 +104,17 @@ install:
   - docker-compose -f udacity-c3-deployment/docker/docker-compose-build.yaml push
 ```
 
-- Add environment variables in TravisCI by selecting the settings option. If we want to have travis push image to Dockerhub, we need to add in credential for id/password to Dockerhub.
+- Add in application specific environment variables in TravisCI setting. Also add in credential for Dockhub to publish the built image.
 
 ![travis_env_vars](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/travis_env_vars.png)
 
-- Commit and push changes to Github, and trigger a Travis CI build.
+- Commit and push changes to Github, and trigger new build.
 
 ![travis_cicd_build](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/travis_cicd_build.png)
 
 ### Provision a Kubernetes cluster
 
-To provision a k8s cluster on AWS platform, simply issue the script bellow.
+To provision a k8s cluster on AWS, use eksctl command with script bellow.
 
 ```bash
 eksctl create cluster \
@@ -148,7 +147,7 @@ echo -n 'POSTGRESS_PASSWORD' | base64
 
 ### Deployment configmap, secrets, and microservices
 
-Deploy configmaps and secrets first.
+Deploy k8s configmaps and secrets.
 
 ```bash
 kubectl apply -f aws-secret.yaml
@@ -156,7 +155,7 @@ kubectl apply -f env-secret.yaml
 kubectl apply -f env-configmap.yaml
 ```
 
-Deploy application microservices. Specifically we deploy seperate services for frontend web app, NGINX reverse proxy, and two suit of backend APIs.
+Deploy microservices. Specifically we deploy seperate services for frontend web app, NGINX reverse proxy, and two sets of backend APIs.
 
 ```bash
 kubectl apply -f backend-feed-deployment.yaml
@@ -169,7 +168,7 @@ kubectl apply -f reverseproxy-deployment.yaml
 kubectl apply -f reverseproxy-service.yaml
 ```
 
-We can check status of pods , deplyments , and services with following commands.
+We then check status of pods , deplyments , and services.
 
 ```bash
 kubectl get pods
@@ -180,7 +179,7 @@ kubectl get all
 
 ![aws_app_ready](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/aws_app_ready.png)
 
-Finally we can set up port forwarding to test drive the service.
+Finally we set up port forwarding to test drive the service.
 
 ```bash
 kubectl port-forward service/reverseproxy 8080:8080
@@ -191,13 +190,13 @@ kubectl port-forward service/frontend 8100:8100
 
 ### Additional logging
 
-The application is monitored by Amazon CloudWatch. Inside AWS EKS control plane, we can optionally activate various types of logs for purpose of debugging.
+The application is monitored by Amazon CloudWatch. Inside AWS EKS control plane, we can optionally activate various types of logging for purpose of debugging.
 
 ![aws_cloudwatch_logs](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/aws_cloudwatch_logs.png)
 
 ### Upgrade without disruption
 
-For new version release of each functionality, we can opt for either rolling update, or blue/green deployment.
+For future releases of functionalities, we can opt for rolling update or blue/green deployment.
 
 e.g. just deploy updated version
 
@@ -205,7 +204,7 @@ e.g. just deploy updated version
 kubectl apply -f frontend-deployment
 ```
 
-e.g. deploy two version at the same time
+e.g. deploy two versions at the same time
 
 ```bash
 kubectl apply -f frontend-deployment-alpha
@@ -214,7 +213,7 @@ kubectl apply -f frontend-deployment-beta
 
 ### Scale with elasticity
 
-For fluctuation of incomign traffic, we can easily scale up and down with the number of nodes in the mix.
+To cope with fluctuation of incoming traffic, we can scale up and down the number of servicing nodes in the cluster.
 
 e.g. scale Up
 
