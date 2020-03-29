@@ -143,7 +143,7 @@ cat ~/.aws/credentaisl | base64
 
 ```bash
 echo -n 'POSTGRESS_USERNAME' | base64
-echo -n 'POSTGRESS_USERNAME' | base64
+echo -n 'POSTGRESS_PASSWORD' | base64
 ```
 
 ### Deployment configmap, secrets, and microservices
