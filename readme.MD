@@ -131,21 +131,15 @@ eksctl create cluster \
 
 ### Setup k8s configmaps and secrets
 
-1. aws-secret.yaml
-
-Encode AWS-Credential.
+- aws-secret.yaml. Encode AWS-Credential.
 
 ```bash
 cat ~/.aws/credentaisl | base64
 ```
 
-2. env-configmap.yaml
+- env-configmap.yaml. Save application specific configurations, e.g. AWS S3 bucket name, database name, database host, JWT secret, etc.
 
-Save application specific configurations, e.g. AWS S3 bucket name, database name, database host, JWT secret, etc.
-
-3. env-secret.yaml
-
-Encode postgres database username and password.
+- env-secret.yaml. Encode postgres database username and password.
 
 ```bash
 echo -n 'POSTGRESS_USERNAME' | base64
