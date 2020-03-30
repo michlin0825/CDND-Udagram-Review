@@ -1,8 +1,8 @@
 # Udagram Microservice Deployment
 
-## Background
+### Background
 
-Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
+Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. The app allows users to register and log into web client, post photos to the feed, and process photos using an image filtering microservice.
 
 The project is composed of three pieces:
 
@@ -10,9 +10,11 @@ The project is composed of three pieces:
 2. The RestAPI Feed Backend, a Node-Express feed microservice.
 3. The RestAPI User Backend, a Node-Express user microservice.
 
+The aim of the exercise is to build, test and deploy the microservice, using container technology, and CI/CD workflow.
+
 ### Installation
 
-Ensure relevant dependencies are in place with the following commands:
+Ensure relevant dependencies are in place.
 
 ```bash
 docker --version
@@ -22,9 +24,9 @@ kubectl version --short --client
 aws-iam-authenticator version
 ```
 
-### Setup Environment Variables
+### Setup environment variables
 
-Add following to the \$PATH
+Add following to the \$PATH.
 
 ```bash
 export POSTGRESS_USERNAME=your postgress username;
@@ -39,7 +41,7 @@ export JWT_SECRET=your jwt secret;
 
 ### Build docker images
 
-Build local docker images for the project
+Build local docker images for the project.
 
 ```bash
 docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel
@@ -49,7 +51,7 @@ docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml build
 
 ### Start docker containers
 
-Spin up docker containers with following command
+Spin up docker containers with following command.
 
 ```bash
 docker-compose -f ./udacity-c3-deployment/docker/docker-compose.yaml up
@@ -59,13 +61,13 @@ docker-compose -f ./udacity-c3-deployment/docker/docker-compose.yaml up
 
 ### Test application
 
-Make sure users can sign-up, login, post message, and attach pictures. Testing URL is at http://localhost:8100
+Make sure users can sign-up, login, post message, and attach pictures. Testing URL is at http://localhost:8100.
 
 ![test_web_app](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/test_web_app.png)
 
 ### Upload image to Dockerhub
 
-For distribution over the internet, we can publish container to Dockerhub.
+For distribution over the internet, we publish container(s) to the Dockerhub.
 
 ```bash
 docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml push
@@ -73,11 +75,11 @@ docker-compose -f ./udacity-c3-deployment/docker/docker-compose-build.yaml push
 
 ![image_to_dockerhub](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/image_to_dockerhub.png)
 
-### Travis CI/CD build
+### Setup Travis CI/CD
 
-For CI/CD, we use Travis CI for this project. The github master branch will trigger the build process on every commmit.
+For CI/CD, we use Travis CI for this exercise. New commit to the github master branch will trigger new build process.
 
-- Sign up TravisCI and connect Github repo to TrivisCI.
+- Sign up Travis CI and connect Github repo to Trivis CI.
 - Add .travis.yml to the root of the application.
 
 ```bash
@@ -104,21 +106,24 @@ install:
   - docker-compose -f udacity-c3-deployment/docker/docker-compose-build.yaml push
 ```
 
-- Add in application specific environment variables in TravisCI setting. Also add in credential for Dockhub to publish the built image.
+- Add microservice specific environment variables in TravisCI setting. Also add in credential for Dockhub to publish the built image.
 
 ![travis_env_vars](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/travis_env_vars.png)
 
-- Commit and push changes to Github, and trigger new build.
+- Commit and push changes to Github, and trigger build.
 
 ![travis_cicd_build](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/travis_cicd_build.png)
 
-### Provision a Kubernetes cluster
+### Provision k8s cluster on AWS
 
 To provision a k8s cluster on AWS, use eksctl command with script bellow.
 
 ```bash
 eksctl create cluster \
+--name "udagram"
 --version 1.14 \
+--region ap-northeast-1 \
+--nodegroup-name udagram-workers \
 --node-type t3.medium \
 --nodes 3 \
 --nodes-min 1 \
@@ -130,22 +135,22 @@ eksctl create cluster \
 
 ### Setup k8s configmaps and secrets
 
-- aws-secret.yaml. Encode AWS-Credential.
+- Encode AWS-Credential in `aws_secret.yaml`. The pod will need AWS credential to access S3 bucket to save images that users upload.
 
 ```bash
 cat ~/.aws/credentaisl | base64
 ```
 
-- env-configmap.yaml. Save application specific configurations, e.g. AWS S3 bucket name, database name, database host, JWT secret, etc.
+- Save microservice specific configurations in `env-configmap.yaml`, e.g. AWS S3 bucket name, database name, database host, JWT secret, etc.
 
-- env-secret.yaml. Encode postgres database username and password.
+- Encode postgres database username and password in `env-secret.yaml`. The pod will need RDS credential to save user posts to the database.
 
 ```bash
 echo -n 'POSTGRESS_USERNAME' | base64
 echo -n 'POSTGRESS_PASSWORD' | base64
 ```
 
-### Deployment configmap, secrets, and microservices
+### Deploy configmap, secrets, and microservices
 
 Deploy k8s configmaps and secrets.
 
@@ -179,7 +184,7 @@ kubectl get all
 
 ![aws_app_ready](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/aws_app_ready.png)
 
-Finally we set up port forwarding to test drive the service.
+Finally we set up port forwarding to test drive the microservice.
 
 ```bash
 kubectl port-forward service/reverseproxy 8080:8080
@@ -188,7 +193,7 @@ kubectl port-forward service/frontend 8100:8100
 
 ![k8s_port_forward](https://github.com/michlin0825/CDND-Udagram-Review/blob/master/screenshots/k8s_port_forward.png)
 
-### Additional logging
+### Enable additional logging
 
 The application is monitored by Amazon CloudWatch. Inside AWS EKS control plane, we can optionally activate various types of logging for purpose of debugging.
 
@@ -196,7 +201,7 @@ The application is monitored by Amazon CloudWatch. Inside AWS EKS control plane,
 
 ### Upgrade without disruption
 
-For future releases of functionalities, we can opt for rolling update or blue/green deployment.
+For future releases of functionalities, we have choice of rolling update or blue/green deployment.
 
 e.g. just deploy updated version
 
@@ -215,13 +220,13 @@ kubectl apply -f frontend-deployment-beta
 
 To cope with fluctuation of incoming traffic, we can scale up and down the number of servicing nodes in the cluster.
 
-e.g. scale Up
+e.g. scale up
 
 ```bash
 kubectl scale deployment/user --replicas=4
 ```
 
-e.g. scale Down
+e.g. scale down
 
 ```bash
 kubectl scale deployment/user --replicas=2
